@@ -4512,6 +4512,7 @@ def _warn(
 
 def _write_log(log_state: ParseLogState) -> None:
     config.ensure_base_dirs()
+    config.cleanup_logs()
     log_path = config.build_log_path(log_state.start_time)
     lines = [
         f"template_path: {log_state.template_path}",

@@ -1,6 +1,8 @@
+import os
 import unittest
 from datetime import datetime
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 from src import config
 
@@ -46,6 +48,29 @@ class ConfigTests(unittest.TestCase):
         self.assertTrue(config.LOG_DIR.exists())
         self.assertTrue(config.OUTPUT_DIR.is_dir())
         self.assertTrue(config.LOG_DIR.is_dir())
+
+    def test_cleanup_logs_removes_old_files(self) -> None:
+        original_log_dir = config.LOG_DIR
+        with TemporaryDirectory() as tmpdir:
+            config.LOG_DIR = Path(tmpdir)
+            try:
+                old_log = config.LOG_DIR / f"{config.LOG_FILE_PREFIX}_old.log"
+                new_log = config.LOG_DIR / f"{config.LOG_FILE_PREFIX}_new.log"
+                old_log.write_text("old", encoding="utf-8")
+                new_log.write_text("new", encoding="utf-8")
+                base_time = datetime(2024, 1, 10, 12, 0, 0)
+                old_time = base_time.timestamp() - 6 * 86400
+                new_time = base_time.timestamp() - 2 * 86400
+                os.utime(old_log, (old_time, old_time))
+                os.utime(new_log, (new_time, new_time))
+
+                removed = config.cleanup_logs(retention_days=5, now=base_time)
+
+                self.assertEqual(removed, 1)
+                self.assertFalse(old_log.exists())
+                self.assertTrue(new_log.exists())
+            finally:
+                config.LOG_DIR = original_log_dir
 
 
 if __name__ == "__main__":

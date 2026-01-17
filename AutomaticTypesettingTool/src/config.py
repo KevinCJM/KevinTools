@@ -31,3 +31,23 @@ def build_log_path(ts: datetime | None = None) -> Path:
         ts = datetime.now()
     name = f"{LOG_FILE_PREFIX}_{ts.strftime(LOG_TIMESTAMP_FORMAT)}.log"
     return LOG_DIR / name
+
+
+def cleanup_logs(retention_days: int = 5, now: datetime | None = None) -> int:
+    if retention_days <= 0:
+        return 0
+    try:
+        LOG_DIR.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        return 0
+    base_time = now or datetime.now()
+    cutoff = base_time.timestamp() - retention_days * 86400
+    removed = 0
+    for path in LOG_DIR.glob(f"{LOG_FILE_PREFIX}_*.log"):
+        try:
+            if path.stat().st_mtime < cutoff:
+                path.unlink()
+                removed += 1
+        except OSError:
+            continue
+    return removed
