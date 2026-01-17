@@ -1,0 +1,46 @@
+{
+  "toc_template": {
+    "roles": [
+      "toc_body_L1",
+      "toc_body_L2",
+      "toc_body_L3",
+      "toc_title"
+    ],
+    "toc_levels": [
+      1,
+      2,
+      3
+    ]
+  },
+  "margin_table_template": {
+    "page_margins": {
+      "sections": 3,
+      "distinct_margins": 3,
+      "logical_parts": {
+        "statement": 1,
+        "main": 1,
+        "back": 1
+      }
+    },
+    "table_borders": {
+      "summary": {
+        "grid": 1,
+        "outer_only": 1,
+        "inner_only": 1,
+        "none": 1,
+        "mixed": 1
+      }
+    }
+  },
+  "footnote_template": {
+    "roles": [
+      "footnote_text",
+      "footnote_reference"
+    ],
+    "footnote_numbering": {
+      "format": "decimal",
+      "start": 1,
+      "restart": "eachPage"
+    }
+  }
+}
